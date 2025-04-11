@@ -1,0 +1,53 @@
+#
+# service unit description for LbServer v0.
+# $Id: lbserver.service 1266 2023-03-01 10:23:23Z pischky $
+#
+# see:
+#   https://www.freedesktop.org/software/systemd/man/systemd.syntax.html
+#   https://www.freedesktop.org/software/systemd/man/systemd.unit.html
+#   https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#   https://www.freedesktop.org/software/systemd/man/systemd.exec.html
+#   https://www.freedesktop.org/software/systemd/man/systemd.kill.html
+#   https://www.freedesktop.org/software/systemd/man/systemd.special.html
+#
+
+
+[Unit]
+
+Description=LbServer daemon (LoconetOverTcp)
+Documentation=https://loconetovertcp.sourceforge.net/Server/index.html#lbserver
+; "Requires=" or "Wants=" ?
+; "network-online.target" or "network.target" ?
+Requires=network-online.target
+After=network-online.target
+FailureAction=none
+
+
+[Service]
+
+Type=exec
+Restart=no
+ExecStart=/usr/local/bin/LbServer -d
+# ExecReload=/bin/kill -HUP $MAINPID
+# ExecStop=/bin/kill -TERM $MAINPID
+KillMode=process
+KillSignal=SIGTERM
+
+WorkingDirectory=~
+User=lbserver
+Group=lbserver
+# SupplementaryGroups=dialout
+
+StandardInput=null
+; "null" or "journal"
+StandardOutput=null
+StandardError=null
+; "warning", "notice", "info" or "debug"
+LogLevelMax=info
+
+
+[Install]
+
+; "multi-user.target" is default target on raspios (try 'systemctl get-default')
+WantedBy=multi-user.target
+

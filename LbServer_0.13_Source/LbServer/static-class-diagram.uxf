@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>6</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>324</x>
+      <y>588</y>
+      <w>162</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+/CAbstractLoconetDevice/
+--
+--
+/+ ~CAbstractLoconetDevice()/
+/+ ReceivePacket(void*, unsigned int) : int/
+/+ SendPacket(void*, unsigned int) : bool/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>312</x>
+      <y>690</y>
+      <w>186</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>CLocoBuffer
+--
+- m_aucReceiveBuffer : unsigned char[127]
+- m_uiReceiveBufferFill : unsigned int
+- m_clPort : CSerialPort
+--
++ CLocoBuffer()
++ ~CLocoBuffer()
++ ReceivePacket(void*, unsigned int) : int
++ SendPacket(void*, unsigned int) : bool
++ Open(const char*, int, bool) : bool
+- StripReceivedLeadingNonopcodes()
+- CheckReceivedCheckByte(unsigned int) : bool
+- GetLengthOfReceivedPacket() : int
+- ShrinkBuffer(unsigned int)
+- FindPacketInReceiveBuffer() : int
+
+ </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>396</x>
+      <y>642</y>
+      <w>18</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>846</y>
+      <w>1152</w>
+      <h>12</h>
+    </coordinates>
+    <panel_attributes>halign=left
+fontsize=10
+bg=gray
+LbServer $Id: static-class-diagram.uxf 1214 2023-02-06 13:06:17Z pischky $
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>540</x>
+      <y>720</y>
+      <w>60</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>CSerialPort
+--
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>492</x>
+      <y>726</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>270</x>
+      <y>450</y>
+      <w>120</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>CLoconetServer
+--
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>372</x>
+      <y>468</y>
+      <w>18</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;200.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>174</x>
+      <y>588</y>
+      <w>120</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>CMutexUser
+--
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>282</x>
+      <y>468</y>
+      <w>42</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;use&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;200.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>588</y>
+      <w>120</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>CSyncMutex
+--
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>114</x>
+      <y>588</y>
+      <w>72</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;use&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;20.0;100.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>96</x>
+      <y>468</y>
+      <w>192</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;use&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;200.0;300.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>78</x>
+      <y>450</y>
+      <w>120</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>CSyncEvent
+--
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>192</x>
+      <y>450</y>
+      <w>90</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+&lt;&lt;use&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;20.0;130.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>18</x>
+      <y>384</y>
+      <w>120</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>CAbstractSyncObject
+--
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>108</x>
+      <y>402</y>
+      <w>18</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>36</x>
+      <y>402</y>
+      <w>18</w>
+      <h>198</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;310.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>354</x>
+      <y>360</y>
+      <w>120</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+/CTcpConnectionCreator/
+--
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>372</x>
+      <y>390</y>
+      <w>18</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>186</x>
+      <y>360</y>
+      <w>120</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+/CClientConnectionHandler/
+--
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>282</x>
+      <y>390</y>
+      <w>18</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>204</x>
+      <y>282</y>
+      <w>120</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>CClientConnection
+--
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>336</x>
+      <y>282</y>
+      <w>120</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>CTcpServer
+--
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>372</x>
+      <y>300</y>
+      <w>18</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>282</x>
+      <y>300</y>
+      <w>18</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>342</x>
+      <y>300</y>
+      <w>18</w>
+      <h>162</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;250.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>306</x>
+      <y>300</y>
+      <w>30</w>
+      <h>162</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m2=0..*</panel_attributes>
+    <additional_attributes>10.0;250.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>360</x>
+      <y>138</y>
+      <w>138</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>/CAbstractThread/
+--
+# m_pthread : pthread_t
+# m_bDeleteMyselfOnExit : bool
+--
++ CAbstractThread()
++ ~CAbstractThread()
++ StopThread() : bool
++ StartThread() : bool
+/+ ThreadMain()/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>174</x>
+      <y>204</y>
+      <w>120</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>CReceiveLineBuffer
+--
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>216</x>
+      <y>222</y>
+      <w>18</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>306</x>
+      <y>222</y>
+      <w>78</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>110.0;10.0;110.0;60.0;10.0;60.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>408</x>
+      <y>222</y>
+      <w>18</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1008</x>
+      <y>378</y>
+      <w>96</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>CTopic
+--
++ m_Request : bool
+# m_Output : char[]
+--
++ CTopic()
++ ~CTopic()
+/+ Get() : char*/</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1026</x>
+      <y>444</y>
+      <w>18</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>948</x>
+      <y>510</y>
+      <w>96</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>CValue
+--
+# m_Name : char*
+--
++ CValue(char*)
++ ~CValue()
+/# GetValue(char*)/
+/+ Get() : char*/</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>906</x>
+      <y>624</y>
+      <w>102</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>CDefault
+--
+# m_Value : char*
+--
++ CDefault(char*, char*)
++ GetValue(char*)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>966</x>
+      <y>576</y>
+      <w>18</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1020</x>
+      <y>624</y>
+      <w>84</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>CCounter
+--
+# m_Counter : int
+--
++ CCounter(char*, char*)
++ SetValue(unsigned int)
++ Increment
++ GetValue(char*)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1026</x>
+      <y>576</y>
+      <w>18</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1032</x>
+      <y>720</y>
+      <w>120</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>CConnect
+--
+--
++ CConnect()
++ Connected(unsigned int)
++ Disconnected(unsigned int)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1074</x>
+      <y>690</y>
+      <w>18</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1056</x>
+      <y>510</y>
+      <w>96</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>CRxTx
+--
+# m_Rx : unsigned int
+# m_Tx : unsigned int
+--
++ CTxRx()
++ IncrementTx()
++ IncrementRx()
++ Get() : char*</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1074</x>
+      <y>444</y>
+      <w>18</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>570</x>
+      <y>312</y>
+      <w>162</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>/CDisplayLcd/
+--
+--
++ CDisplayLcd()
++ ~CDisplayLcd()
++ ErrorMessage(int, const char*)
++ ReceivedFromPort(const void*, size_t)
++ ReceivedMessage(const void*, size_t)
++ SendMessage(const void*, size_t)
++ SentSuccess()
++ Connection(size_t)
++ Disconnection(size_t)
++ SendError(const char*)
++ ReceiveError(const char*)
+# ThreadMain()
+/# WriteTopLine(const char *msg)/
+/# WriteBottomLine(const char *msg)/
+# CheckTop(bool)
+# CheckBottom()
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>462</x>
+      <y>222</y>
+      <w>138</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0;210.0;50.0;210.0;150.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>618</x>
+      <y>228</y>
+      <w>114</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>/IDisplayBackend/
+--
+- _next : IDisplayBackend*
+--
++ IDisplayBackend()
++ ~IDisplayBackend()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>726</x>
+      <y>228</y>
+      <w>48</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0;60.0;40.0;10.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>582</x>
+      <y>60</y>
+      <w>168</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+/IDisplay/
+--
+--
++ ~IDisplay()
+/+ ErrorMessage(int, const char* )/
+/+ ReceivedFromPort(const void*, size_t)/
+/+ ReceivedMessage(const void*, size_t)/
+/+ SendMessage(const void*, size_t)/
+/+ SentSuccess()/
+/+ Connection(size_t)/
+/+ Disconnection(size_t)/
+/+ SendError(const char*)/
+/+ ReceiveError(const char*)/
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>510</x>
+      <y>546</y>
+      <w>162</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>CDisplayLcdPiLocoBuffer
+--
+- device : FILE*
+--
++ CDisplayLcdPiLocoBuffer(FILE*)
++ CDisplayLcdPiLocoBuffer(const char*)
++ ~CDisplayLcdPiLocoBuffer()
++ WriteTopLine(const char*)
++ WriteBottomLine(const char*)
+_+ openLcdDevice(const char*) : FILE*_
+- gotoxy(int, int)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>696</x>
+      <y>696</y>
+      <w>144</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>CDisplayLcdSimul
+--
+- char* m_pcTop : const char*
+- char* m_pcBottom : const char*
+- m_uiRefeshCounter : unsigned int
+--
++ CDisplayLcdSimul()
++ ~CDisplayLcdSimul()
++ WriteTopLine(const char*)
++ WriteBottomLine(const char*)
+- Output()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>594</x>
+      <y>486</y>
+      <w>18</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>708</x>
+      <y>486</y>
+      <w>18</w>
+      <h>222</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;350.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>666</x>
+      <y>276</y>
+      <w>18</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>666</x>
+      <y>186</y>
+      <w>18</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>750</x>
+      <y>402</y>
+      <w>156</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>CDisplayNormal
+--
+--
++ CDisplayNormal()
++ ~CDisplayNormal()
++ ErrorMessage(int, const char*)
++ ReceivedFromPort(const void*, size_t)
++ ReceivedMessage(const void*, size_t)
++ SendMessage(const void*, size_t)
++ SentSuccess()
++ Connection(size_t)
++ Disconnection(size_t)
++ SendError(const char*)
++ ReceiveError(const char*)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>738</x>
+      <y>546</y>
+      <w>156</w>
+      <h>138</h>
+    </coordinates>
+    <panel_attributes>CDisplayVerbose
+--
+- bDots : bool
+--
++ CDisplayVerbose()
++ ~CDisplayVerbose()
++ ErrorMessage(int, const char*)
++ ReceivedFromPort(const void*, size_t)
++ ReceivedMessage(const void*, size_t)
++ SendMessage(const void*, size_t)
++ SentSuccess()
++ Connection(size_t)
++ Disconnection(size_t)
++ SendError(const char*)
++ ReceiveError(const char*)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>714</x>
+      <y>276</y>
+      <w>54</w>
+      <h>138</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0;70.0;30.0;70.0;210.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>696</x>
+      <y>276</y>
+      <w>60</w>
+      <h>282</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0;80.0;50.0;80.0;450.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>774</x>
+      <y>216</y>
+      <w>216</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>CDisplayFrontend
+--
+- _root : IDisplayBackend*
+--
++ CDisplayFrontend()
++ ~CDisplayFrontend()
++ Add(IDisplayBackend*)
++ DeleteAll()
++ ErrorMessageF(int, const char*)
++ ErrorMessage(int, const char*)
++ ReceivedFromPort(const void*, size_t)
++ ReceivedMessage(const void*, size_t)
++ SendMessage(const void*, size_t)
++ SentSuccess()
++ Connection(size_t)
++ Disconnection(size_t)
++ SendError(const char*)
++ ReceiveError(const char*)
+- Generic(EDisplay, const void*, size_t, int, const char*)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>714</x>
+      <y>186</y>
+      <w>174</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0;270.0;30.0;270.0;50.0</additional_attributes>
+  </element>
+</diagram>

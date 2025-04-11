@@ -1,0 +1,29 @@
+# $Id: config.lcd.txt 1135 2022-10-23 14:13:54Z pischky $
+
+# include from "/boot/config.txt" by "include config.lcd.txt"
+
+[all]
+
+#
+# add support for LCD display connected to GPIO pins for PiLocoBuffer
+#
+
+# See "/boot/overlays/README"
+# or https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README.
+# Tested on "2022-04-04-raspios-bullseye-arm64-lite",
+#       and "2022-09-22-raspios-bullseye-arm64-lite".
+# Remark: pin_bl=27 does not work on "2022-04-04-raspios"
+dtoverlay=hd44780-lcd,pin_d4=18,pin_d5=22,pin_d6=23,pin_d7=24,pin_rs=4,pin_en=25,display_width=16,display_height=2
+
+#
+# set GPIO 27 as output and set high for backlight
+#
+
+# This sets the backlight on while booting. Used because param "pin_bl=27".
+# See https://www.raspberrypi.com/documentation/computers/config_txt.html#gpio-control
+# Tested on "2022-04-04-raspios-bullseye-arm64-lite" and "2022-09-22-raspios-bullseye-arm64-lite".
+# Access from userspace is still allowed:
+#   $ echo 27 > /sys/class/gpio/export
+#   $ echo out > /sys/class/gpio/gpio27/direction
+#   $ echo 1 > /sys/class/gpio/gpio27/value
+gpio=27=op,dh

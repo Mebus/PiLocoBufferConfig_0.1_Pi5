@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="PiLocoBufferConfig" basedir="." default="dist">
+
+    <!-- $Id: build.xml 1287 2023-03-29 11:13:23Z pischky $ -->
+
+    <description>
+        Build the PiLocoBuffer Config project and create Zips
+        for distribution with Apache ANT.
+    </description>
+
+    <property file="build.properties" />
+    <property file="${user.home}/build.properties" />
+    <property environment="env"/>
+    <property name="headurl"
+              value="$HeadURL: https://pischky@svn.code.sf.net/p/loconetovertcp/svn/PiLocoBuffer/config/tags/0.1/build.xml $" />
+
+    <condition property="windows_os">
+        <os family="windows" />
+    </condition>
+
+    <target name="init">
+        <echo message="running ant '${ant.version}'" level="info" />
+        <echo message="on java '${ant.java.version}'" level="info" />
+        <echo message="java.home    = '${java.home}'" level="info" />
+        <echo message="java.version = '${java.version}'" level="info" />
+        <echo message="java.vendor  = '${java.vendor}'" level="info" />
+        <echo message="'${java.runtime.name} (build ${java.runtime.version})'"
+              level="info" />
+        <echo message="'${java.vm.name} (build ${java.vm.version}, ${java.vm.info})'"
+              level="info" />
+    </target>
+
+    <target name="version">
+        <!-- Set the default version to "trunk" -->
+        <property name="version" value="trunk" />
+        <!-- Set version to a version-number, if this is a tagged release -->
+        <script language="javascript" setbeans="false">
+        <![CDATA[
+            var url = project.getProperty("headurl"); // type: java.lang.String
+            var pos = url.lastIndexOf( "/tags/" );
+            if( pos >= 0 ) {
+                var term = url.indexOf( "/", pos+6 );
+                if( term < 0 ) term = url.length();
+                project.setProperty("version", url.substring( pos+6, term ));
+            }
+        ]]>
+        </script>
+        <echo message="version = '${version}'" level="info" />
+        <tstamp>
+            <format property="buildtime" pattern="yyyy-MM-dd HH:mm:ss" />
+        </tstamp>
+        <echo message="buildtime = '${buildtime}'" level="info" />
+    </target>
+
+    <target name="zips" depends="version"
+            description="Create PiLocoBufferConfig_X.Y.zip">
+        <zip destfile="PiLocoBufferConfig_${version}.zip"
+             encoding="UTF-8" useLanguageEncodingFlag="true"
+             createUnicodeExtraFields="always"
+             comment="PiLocoBufferConfig ${version} source files (build on ${buildtime})" >
+            <zipfileset dir="."
+                        prefix="PiLocoBufferConfig_${version}">
+                <include name="build.xml"          />
+                <include name="config.lcd.txt"     />
+                <include name="config.power.txt"   />
+                <include name="hd44780-lcd.rules"  />
+                <include name="lbserver.conf"      />
+                <include name="Makefile"           />
+                <include name="PI_LB_avrdude.conf" />
+
+                <exclude name="*.zip"              />
+                <exclude name="*.ZIP"              />
+                <exclude name="**/*.bak"           />
+                <exclude name="**/*.BAK"           />
+                <exclude name="**/*.~*"            />
+
+            </zipfileset>
+        </zip>
+    </target>
+
+    <target name="dist" depends="zips"
+            description="build all Zips for distribution" />
+
+    <target name="clean" depends="init"
+            description="Delete all temporary files (*.bak, ..." >
+    </target>
+
+    <target name="distclean" depends="clean" 
+            description="Delete all temporary files and dist zips" >
+        <delete verbose="true">
+            <fileset dir=".">
+                <include name="PiLocoBufferConfig_*.zip" />
+            </fileset>
+        </delete>
+    </target>
+
+</project>

@@ -1,0 +1,11 @@
+# $Id: hd44780-lcd.rules 1131 2022-10-22 09:01:24Z pischky $
+
+# define rules for /dev/lcd to support PiLocoBuffer
+# copy to /etc/udev/rules.d/, chown root:root, chmod 0644
+
+# change permission to "a+rw" (0666)
+ACTION=="add", KERNEL=="lcd", MODE="0666"
+
+# change group to "pi" and permission to "o+rw,g+rw" (0660)
+# ACTION=="add", KERNEL=="lcd", GROUP="pi"
+

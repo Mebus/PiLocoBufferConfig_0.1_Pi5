@@ -1,0 +1,12 @@
+# $Id: config.power.txt 1131 2022-10-22 09:01:24Z pischky $
+
+# include from "/boot/config.txt" by "include power.lcd.txt"
+
+[all]
+
+# See "/boot/overlays/README"
+# or https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README.
+# Initiates a shutdown when GPIO pin 3 changes.
+# Tested on "2022-04-04-raspios-bullseye-arm64-lite".
+dtoverlay=gpio-shutdown
+

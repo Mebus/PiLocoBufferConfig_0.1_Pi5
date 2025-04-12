@@ -1,0 +1,159 @@
+$Id: BUILDING-RASPBIAN.TXT 1302 2023-04-04 05:52:22Z pischky $
+
+Raspberry Pi OS
+===============
+
+Tested on
+
+ - "Raspberry Pi OS Lite (64-bit)" (2023-02-21-raspios-bullseye-arm64-lite.img.xz)
+ - "Raspberry Pi OS Lite" (2023-02-21-raspios-bullseye-armhf-lite.img.xz)
+
+with LbServer starting with version 0.13.
+
+
+````
+$ sudo apt install libsystemd-dev
+$ cd 
+$ svn checkout https://svn.code.sf.net/p/loconetovertcp/svn/cpp-server/LbServer/trunk LbServer
+$ cd LbServer/LbServer/
+$ make
+$ sudo make install
+$ sudo vi /etc/lbserver.conf
+$ LbServer
+LocoBuffer Server version trunk, for protocol version 1, built Feb 26 2023,
+released under GPL by Stefan Bormann.  Linux port by Ian Cunningham.
+
+Try 'journalctl -f /usr/local/bin/LbServer' to see logging information.
+Reading configuration from /etc/lbserver.conf.
+
+Loconet device port opened on /dev/ttyUSB0 with 57600 baud and with CTS flow control.
+
+TCP server started on port 1234.
+Output uses single characters for increased performance:
+R=received packet, .=nothing received but event was signaled :-(
+s=send request, S=sent successfully, e=send error
+C=client connected, D=client disconnected
+..R..R..R..R.R..R..R..R.R..R..R..R.R..R..R^CGot signal SIGINT(2): 'Interrupt'. Terminating...
+$
+````
+
+Raspberry Pi OS as Service
+==========================
+
+Tested on
+
+ - "Raspberry Pi OS Lite (64-bit)" (2023-02-21-raspios-bullseye-arm64-lite.img.xz)
+ - "Raspberry Pi OS Lite" (2023-02-21-raspios-bullseye-armhf-lite.img.xz)
+
+with LbServer starting with version 0.13.
+
+
+````
+$ sudo apt install libsystemd-dev
+$ cd 
+$ svn checkout https://svn.code.sf.net/p/loconetovertcp/svn/cpp-server/LbServer/trunk LbServer
+$ cd LbServer/LbServer/
+$ make
+$ sudo make install-service
+$ sudo vi /etc/lbserver.conf
+          com_port = /dev/ttyUSB0
+$ systemctl status lbserver.service
+$ sudo systemctl start lbserver.service
+$ sudo journalctl -u lbserver.service
+````
+
+Old Version for LbServer 0.12 and 0.11
+======================================
+
+Tested on Raspbian image 2013-07-26 (2013-07-26-wheezy-raspbian.img)
+and "Raspberry Pi OS Lite (64-bit)" (2023-02-21-raspios-bullseye-arm64-lite.img.xz).
+Tested with release 0.12 and 0.11 of LbServer
+
+pi@raspberrypi ~ $ wget http://sourceforge.net/projects/loconetovertcp/files/LbServer/0.12/LbServer_0.12_Source.zip/download
+...
+2013-08-27 18:13:17 (40.4 KB/s) - `download' saved [69636/69636]
+
+pi@raspberrypi ~ $ mv download LbServer_0.12_Source.zip
+pi@raspberrypi ~ $ unzip LbServer_0.12_Source.zip
+Archive:  LbServer_0.12_Source.zip
+...
+pi@raspberrypi ~ $ cd LbServer_0.12_Source/server/LbServer
+pi@raspberrypi ~/LbServer_0.12_Source/server/LbServer $ sudo make install
+...
+pi@raspberrypi ~/LbServer_0.12_Source/server/LbServer $ sudo make distclean
+pi@raspberrypi ~/LbServer_0.12_Source/server/LbServer $ cd
+pi@raspberrypi ~ $
+pi@raspberrypi ~ $ # connect Arduino Duemilanove with Loconet Shield via USB to Raspberry
+pi@raspberrypi ~ $
+pi@raspberrypi ~ $ tail -f /var/log/messages
+...
+Aug 27 18:29:38 raspberrypi kernel: [ 1623.328407] usb 1-1.2: FTDI USB Serial Device converter now attached to ttyUSB0
+...
+^C
+pi@raspberrypi ~ $
+pi@raspberrypi ~ $ LbServer /dev/ttyUSB0
+LocoBuffer Server version 0.12.0.0, for protocol version 1, built Aug 27 2013,
+released under GPL by Stefan Bormann.  Linux port by Ian Cunningham.
+
+Loconet device port opened on /dev/ttyUSB0 with 57600 baud and CTS flow control.
+TCP server started on port 1234.
+Output uses single characters for increased performance:
+R=received packet, .=nothing received but event was signaled :-(
+s=send request, S=sent successfully, e=send error
+C=client connected, D=client disconnected
+RRRRRRRRRRRRRRRRRRRRCRRRRDRRRR^C
+pi@raspberrypi ~ $
+
+
+Old Version for Raspbian 2012-10-28 with LbServer 0.9
+=====================================================
+
+Tested on Raspbian image 2012-10-28
+(2012-10-28-wheezy-raspbian.img)
+Tested with release 0.9 of LbServer (TAG: "LbServer-0-9")
+
+pi@raspberrypi ~ $ apt-get install cvs
+...
+pi@raspberrypi ~ $ mkdir loconetovertcp-tcp
+pi@raspberrypi ~ $ cd loconetovertcp-tcp/
+pi@raspberrypi ~/loconetovertcp-tcp $ cvs -d:pserver:anonymous@loconetovertcp.cvs.sourceforge.net:/cvsroot/loconetovertcp login
+Logging in to :pserver:anonymous@loconetovertcp.cvs.sourceforge.net:2401/cvsroot/loconetovertcp
+CVS password:
+pi@raspberrypi ~/loconetovertcp-tcp $ export CVSROOT=:pserver:anonymous@loconetovertcp.cvs.sourceforge.net:/cvsroot/loconetovertcp
+pi@raspberrypi ~/loconetovertcp-tcp $ # remove "-r LbServer-0-9" to checkout head
+pi@raspberrypi ~/loconetovertcp-tcp $ cvs checkout -r LbServer-0-9 -R tcp/server
+pi@raspberrypi ~/loconetovertcp-tcp $ cvs checkout -r LbServer-0-9 -R tcp/client
+pi@raspberrypi ~/loconetovertcp-tcp $ cvs checkout -r LbServer-0-9 -R tcp/shared
+pi@raspberrypi ~/loconetovertcp-tcp $ cd tcp/server/LbServer/
+pi@raspberrypi ~/loconetovertcp-tcp/tcp/server/LbServer $ sudo make install
+... (ignore the warnings)
+pi@raspberrypi ~/loconetovertcp-tcp/tcp/server/LbServer $ make distclean
+...
+pi@raspberrypi ~/loconetovertcp-tcp/tcp/server/LbServer $ cd
+pi@raspberrypi ~ $
+pi@raspberrypi ~ $ # connect Arduino Duemilanove with Loconet Shield via USB to Raspberry
+pi@raspberrypi ~ $
+pi@raspberrypi ~ $ LbServer /dev/ttyUSB0
+LocoBuffer Server version 0.9.0.0, for protocol version 1, built Jul 17 2013,
+released under GPL by Stefan Bormann.  Linux port by Ian Cunningham.
+
+Loconet device port opened on /dev/ttyUSB0 with 57600 baud and CTS flow control.
+TCP server started on port 1234.
+Output uses single characters for increased performance:
+R=received packet, .=nothing received but event was signaled :-(
+s=send request, S=sent successfully, e=send error
+C=client connected, D=client disconnected
+RRRCsRSRRsRSsRSsRSsRSsRSsRSsRSsRSsRSRRsRSRsRSRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRsRSsRSsRSsRSsRSsRSsRSsRSsRSsRSsRSsRSsRSD^C
+pi@raspberrypi ~ $ # run LbServer in background
+pi@raspberrypi ~ $ LbServer /dev/ttyUSB0 >/dev/null &
+[1] 3228
+pi@raspberrypi ~ $ ps
+  PID TTY          TIME CMD
+ 1946 pts/0    00:00:07 bash
+ 3228 pts/0    00:00:00 LbServer
+ 3230 pts/0    00:00:00 ps
+pi@raspberrypi ~ $ # stop LbServer in background 
+pi@raspberrypi ~ $ kill 3228
+[1]+  Terminated              LbServer /dev/ttyUSB0 > /dev/null
+pi@raspberrypi ~ $
+

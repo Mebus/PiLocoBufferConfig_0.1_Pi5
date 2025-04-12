@@ -8,7 +8,7 @@ firmware_url = https://sourceforge.net/projects/loconetovertcp/files/PiLocoBuffe
 firmware     = PiLocoBuffer_$(FIRMWARE_VER)
 
 # override on command line like 'make LBSERVER_VER=0.14 install-lbserver'
-LBSERVER_VER ?= 0.13
+LBSERVER_VER ?= 0.14
 lbserver_url = https://sourceforge.net/projects/loconetovertcp/files/LbServer/$(LBSERVER_VER)/
 lbserver     = LbServer_$(LBSERVER_VER)_Source
 
@@ -147,7 +147,7 @@ $(lbserver).zip :
 	    exit 1)
 
 make-lbserver : $(lbserver).zip
-	unzip -o $(lbserver).zip
+	#unzip -o $(lbserver).zip
 	make -C $(lbserver)/LbServer/ all
 
 install-lbserver : check-root make-lbserver

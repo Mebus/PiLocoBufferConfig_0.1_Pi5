@@ -1,0 +1,109 @@
+BUILDING.txt
+$Id: BUILDING.txt 1171 2023-01-07 12:56:40Z sbormann71 $
+
+===================================================================
+Checkout from cvs
+===================================================================
+
+Use your favorite cvs client (or tortoisecvs or eclipse)
+with the following settings:
+	connection type: pserver
+	user           : anonymous
+	host           : loconetovertcp.cvs.sourceforge.net
+	port           : default
+	repository path: /cvsroot/loconetovertcp
+	module         : tcp
+	tag            : <tag>
+The checkout will create the directories "client", "server" and "shared"
+below your working (or project) directory. To save space you can delete 
+the directory "client".
+
+===================================================================
+Download source package
+===================================================================
+
+$ wget http://sourceforge.net/projects/loconetovertcp/files/\
+       LbServer/0.11/LbServer_0.11_Source.zip/download
+$ mv download LbServer_0.11_Source.zip
+$ unzip LbServer_0.11_Source.zip
+$ cd LbServer_0.11_Source
+
+===================================================================
+Building for Windows with Microsoft Visual C++ 2005 Express Edition
+===================================================================
+(outdated)
+
+Download and install Visual C++ 2005 Express Edition from
+http://msdn.microsoft.com/vstudio/express/visualc/download/
+(I used the german version from
+http://www.microsoft.com/germany/msdn/vstudio/products/express/download.mspx)
+
+Install the Windows Platfor SDK from
+http://www.microsoft.com/downloads/details.aspx?familyid=0BAF2B35-C656-4969-ACE8-E4C0C0716ADB&displaylang=en
+
+Follow the instruction on 
+http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/
+to integrate the platform sdk into Visual Studio.
+
+Start Visual Studio from the Windows menu
+From the menu bar select "Datei>>Neu>>Projekt aus vorhandenem Code ..."
+Select "Visual C++" and press "Weiter >".
+Select "server\LbServer" from your working directory as "Projektdateiverzeichnis:".
+Enter "LbServer" as "Projektname:".
+Add two more Source-Directories: "shared" and "shared\win32" and
+press "Weiter >".
+Select "Konsolenanwendungsprojekt" as "Projekttyp:" and press "Weiter >".
+Add "..\..\shared;..\..\shared\win32" as "Include-Suchpfade (/I):"
+Press "Weiter >" and "Fertig stellen".
+remove any files we do not need from the project. Select and use "Aus Projekt ausschließen"
+be sure to exclude all linux versions.
+Add LoconetOverTcp.ico to project. 
+The project files are now:
+
+  Header Files
+    AbstractLoconetDevice.h
+    AbstractThread.h
+    ClientConnection.h
+    LocoBuffer.h
+    LoconetMessage.h
+    LoconetServer.h
+    OsSpecific.h
+    ReceiveLineBuffer.h
+    resource.h
+    SerialPort.h
+    SyncObjects.h
+    TcpServer.h
+    Version.h
+  Resource Files
+    LoconetOverTcp.ico
+    Resource.rc
+  Source Files
+    AbstractLoconetDevice.cpp
+    AbstractThread.cpp
+    ClientConnection.cpp
+    LbServer.cpp
+    LocoBuffer.cpp
+    LoconetMessage.cpp
+    LoconetServer.cpp
+    ReceiveLineBuffer.cpp
+    SerialPort.cpp
+    SyncObjects.cpp
+    TcpServer.cpp
+
+Add the symbol "_CRT_SECURE_NO_DEPRECATE" to 
+Project-Settings (Konfigurationseigenschaften>>C/C++>>Präprozessor>>Präprozessordefinitionen")
+Add Library "wsock32.lib": Project-Settings (Konfigurationseigenschaften>>Linker>>Eingabe>>Zusätzliche Abhängigkeiten: wsock32.lib)
+Add both this settings to Debug and Relase Configuration.
+
+
+===================================================================
+Building for Windows with minGW
+===================================================================
+cd server/LbServer
+make
+
+===================================================================
+Building on Linux
+===================================================================
+cd server/LbServer
+sudo make install

@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="LbServer" basedir="." default="dist">
+
+    <!-- $Id: build.xml 1267 2023-03-01 12:30:57Z pischky $ -->
+
+    <description>
+        Build the LbServer project and create Zips
+        for distribution with Apache ANT.
+    </description>
+
+    <property file="build.properties" />
+    <property file="${user.home}/build.properties" />
+    <property environment="env"/>
+    <property name="headurl"
+              value="$HeadURL: https://pischky@svn.code.sf.net/p/loconetovertcp/svn/cpp-server/LbServer/tags/0.14/build.xml $" />
+
+    <condition property="windows_os">
+        <os family="windows" />
+    </condition>
+
+    <target name="init">
+        <echo message="running ant '${ant.version}'" level="info" />
+        <echo message="on java '${ant.java.version}'" level="info" />
+        <echo message="java.home    = '${java.home}'" level="info" />
+        <echo message="java.version = '${java.version}'" level="info" />
+        <echo message="java.vendor  = '${java.vendor}'" level="info" />
+        <echo message="'${java.runtime.name} (build ${java.runtime.version})'"
+              level="info" />
+        <echo message="'${java.vm.name} (build ${java.vm.version}, ${java.vm.info})'"
+              level="info" />
+    </target>
+
+    <target name="version">
+        <!-- Set the default version to "trunk" -->
+        <property name="version" value="trunk" />
+        <!-- Set version to a version-number, if this is a tagged release -->
+        <script language="javascript" setbeans="false">
+        <![CDATA[
+            var url = project.getProperty("headurl"); // type: java.lang.String
+            var pos = url.lastIndexOf( "/tags/" );
+            if( pos >= 0 ) {
+                var term = url.indexOf( "/", pos+6 );
+                if( term < 0 ) term = url.length();
+                project.setProperty("version", url.substring( pos+6, term ));
+            }
+        ]]>
+        </script>
+        <echo message="version = '${version}'" level="info" />
+        <tstamp>
+            <format property="buildtime" pattern="yyyy-MM-dd HH:mm:ss" />
+        </tstamp>
+        <echo message="buildtime = '${buildtime}'" level="info" />
+        <!-- set fileVersion from svn version (x.y or trunk) to w.x.y.z -->
+        <property name="fileVersion" value="0.0.0.0" />
+        <!-- format fileVersion to 1.2.3.4 by adding .0 to exact four numbers -->
+        <script language="javascript" setbeans="false">
+        <![CDATA[
+            var vers = project.getProperty("version"); // java.lang.String
+            var fv = new String(vers); // javascript string
+            var re1 = new RegExp("^([0-9]+)$");
+            var re2 = new RegExp("^([0-9]+)\\.([0-9]+)$");
+            var re3 = new RegExp("^([0-9]+)\\.([0-9]+)\\.([0-9]+)$");
+            var re4 = new RegExp("^([0-9]+)\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)$");
+            if( re1.test(fv) ) {        // "w"
+                project.setProperty("fileVersion", fv.replace(re1, "$1.0.0.0"));
+            } else if( re2.test(fv) ) { // "w.x"
+                project.setProperty("fileVersion", fv.replace(re2, "$1.$2.0.0"));
+            } else if( re3.test(fv) ) { // "w.x.y"
+                project.setProperty("fileVersion", fv.replace(re3, "$1.$2.$3.0"));
+            } else if( re4.test(fv) ) { // "w.x.y.z"
+                project.setProperty("fileVersion", fv.replace(re4, "$1.$2.$3.$4"));
+            } else {
+                print("Failed to convert version to fileVersion. Using "
+                      + project.getProperty("fileVersion"));
+            }
+        ]]>
+        </script>
+        <echo message="fileVersion = '${fileVersion}'" level="info" />
+        <echo message="txtFileVersion = '${fileVersion} / ${version}'" level="info" />
+    </target>
+
+    <target name="version-setup" depends="version">
+        <script language="javascript" setbeans="false">
+        <![CDATA[
+            var vers = project.getProperty("version"); // java.lang.String
+            if ( vers.equals("trunk") ) {
+                // this genrates a new uuid on every run
+                project.setProperty("productCodeUuid",
+                          java.util.UUID.randomUUID().toString().toUpperCase());
+                project.setProperty("packageCodeUuid",
+                          java.util.UUID.randomUUID().toString().toUpperCase());
+                project.setProperty("productVersion", "0.0.0");
+            } else {
+                // this generates a uuid that depends only on the svn tag
+                var prefix1 = new java.lang.String("ProductCode-");
+                var uuid1 = java.util.UUID.nameUUIDFromBytes(
+                                    prefix1.concat(vers).getBytes("UTF-8"))
+                                                      .toString().toUpperCase();
+                var prefix2 = new java.lang.String("PackageCode-");
+                var uuid2 = java.util.UUID.nameUUIDFromBytes(
+                                    prefix2.concat(vers).getBytes("UTF-8"))
+                                                      .toString().toUpperCase();
+                project.setProperty("productCodeUuid", uuid1);
+                project.setProperty("packageCodeUuid", uuid2);
+                project.setProperty("productVersion", vers);
+            }
+        ]]>
+        </script>
+        <echo message="productCodeUuid = '${productCodeUuid}'" level="info" />
+        <echo message="packageCodeUuid = '${packageCodeUuid}'" level="info" />
+        <echo message="productVersion  = '${productVersion}'" level="info" />
+    </target>
+
+    <target name="fix-resources" depends="init, version"
+            description="Update LbServer\Recourses.rc with version" >
+        <!-- patch lines:  FILEVERSION 0,0,0,0
+                           PRODUCTVERSION 0,0,0,0 -->
+        <script language="javascript">
+            var fileVersion = project.getProperty("fileVersion");
+            project.setProperty("fileVersionComma",
+                                fileVersion.replaceAll("\\.", ","));
+        </script>
+        <echo message="fileVersionComma = '${fileVersionComma}'" level="info" />
+        <replaceregexp file="LbServer\Recourses.rc"
+                       match="(FILEVERSION|PRODUCTVERSION) ([0-9]+,[0-9]+,[0-9]+,[0-9]+)"
+                       replace="\1 ${fileVersionComma}"
+                       byline="true" flags="i" />
+        <!-- patch lines:  VALUE "FileVersion", "0, 0, 0, 0"
+                           VALUE "ProductVersion", "0, 0, 0, 0"  -->
+        <script language="javascript">
+            var fileVersion = project.getProperty("fileVersion");
+            project.setProperty("fileVersionComma",
+                                fileVersion.replaceAll("\\.", ", "));
+        </script>
+        <echo message="fileVersionComma = '${fileVersionComma}'" level="info" />
+        <replaceregexp file="LbServer\Recourses.rc"
+                       match='(\"FileVersion\"|\"ProductVersion\"),\s+\"[0-9]+, [0-9]+, [0-9]+, [0-9]+'
+                       replace='\1, "${fileVersionComma}'
+                       byline="true" flags="i" />
+    </target>
+
+    <target name="fix-version-header" depends="init, version"
+            description="Update LbServer\Version.h with version" >
+        <!-- patch line: #define VERSION "0.1" -->
+        <echo message="version = '${version}'" level="info" />
+        <replaceregexp file="LbServer\Version.h"
+                       match='(#define VERSION)\s+\"([a-zA-Z0-9\.]+)\"'
+                       replace='\1 \"${version}\"'
+                       byline="true" flags="i" />
+    </target>
+
+    <target name="fix-assemblyinfo" depends="init, version"
+            description="Update AssemplyInfo.cs with version" >
+        <!-- patch lines:  AssemblyVersion("1.2.*")
+                           AssemblyVersion("1.2.3.*")
+                           AssemblyFileVersion("1.2.3.4") 
+                      to   AssemblyVersion("8.9.*") -->
+        <script language="javascript">
+            var fileVersion = project.getProperty("fileVersion");
+            project.setProperty("fileVersionAsterisk",
+                                fileVersion.replaceAll("[0-9]+\\.[0-9]+$", "*"));
+        </script>
+        <echo message="fileVersionAsterisk = '${fileVersionAsterisk}'" level="info" />
+        <replaceregexp file="LbServerConfig/Properties/AssemblyInfo.cs"
+                       match='AssemblyVersion\("([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)"\)'
+                       replace='AssemblyVersion("${fileVersionAsterisk}")'
+                       byline="true" flags="i" />
+        <replaceregexp file="LbServerConfig/Properties/AssemblyInfo.cs"
+                       match='AssemblyVersion\("([0-9]+\.[0-9]+\.[0-9]+\.\*)"\)'
+                       replace='AssemblyVersion("${fileVersionAsterisk}")'
+                       byline="true" flags="i" />
+        <replaceregexp file="LbServerConfig/Properties/AssemblyInfo.cs"
+                       match='AssemblyVersion\("([0-9]+\.[0-9]+\.\*)"\)'
+                       replace='AssemblyVersion("${fileVersionAsterisk}")'
+                       byline="true" flags="i" />
+        <replaceregexp file="LbServerConfig/Properties/AssemblyInfo.cs"
+                       match='AssemblyFileVersion\("([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)"\)'
+                       replace='AssemblyFileVersion("${fileVersion}")'
+                       byline="true" flags="i" />
+        <replaceregexp file="LbServerConfig/Properties/AssemblyInfo.cs"
+                       match='AssemblyFileVersion\("([0-9]+\.[0-9]+\.[0-9]+\.\*)"\)'
+                       replace='AssemblyFileVersion("${fileVersion}")'
+                       byline="true" flags="i" />
+        <replaceregexp file="LbServerConfig/Properties/AssemblyInfo.cs"
+                       match='AssemblyFileVersion\("([0-9]+\.[0-9]+\.\*)"\)'
+                       replace='AssemblyFileVersion("${fileVersion}")'
+                       byline="true" flags="i" />
+    </target>
+
+    <target name="fix-setup" depends="init, version-setup"
+            description="Update LbServer_Setup\LbServer_Setup.vdproj with version" >
+        <!-- patch lines:
+                    "ProductCode" = "8:{E1748337-4E1D-4F78-9FCC-50D9D18C6711}"
+                    "PackageCode" = "8:{89F3A8E3-024D-4A68-B3A9-F29E54878675}"
+                    "ProductVersion" = "8:0.3"
+        -->
+        <replaceregexp file="LbServer_Setup\LbServer_Setup.vdproj"
+                       match='\"ProductCode\" = \"8:\{([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})\}\"'
+                       replace='"ProductCode" = "8:{${productCodeUuid}}"'
+                       byline="true" flags="i" />
+        <replaceregexp file="LbServer_Setup\LbServer_Setup.vdproj"
+                       match='\"PackageCode\" = \"8:\{([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})\}\"'
+                       replace='"PackageCode" = "8:{${packageCodeUuid}}"'
+                       byline="true" flags="i" />
+        <replaceregexp file="LbServer_Setup\LbServer_Setup.vdproj"
+                       match='\"ProductVersion\" = \"8:([0-9\.]+)"'
+                       replace='"ProductVersion" = "8:${productVersion}"'
+                       byline="true" flags="i" />
+    </target>
+
+    <target name="init-vs2008" depends="init" if="windows_os" >
+        <!-- guess installation of Visual Studio 2008 on win32 or win64 -->
+        <property name="vcvarsall"
+                  value="Microsoft Visual Studio 9.0\VC\vcvarsall.bat" />
+        <condition property="vs2008.bat"
+                   value="${env.ProgramFiles}\${vcvarsall}">
+            <available file="${env.ProgramFiles}\${vcvarsall}" />
+        </condition>
+        <condition property="vs2008.bat"
+                   value="${env.ProgramFiles(x86)}\${vcvarsall}">
+            <available file="${env.ProgramFiles(x86)}\${vcvarsall}" />
+        </condition>
+        <echo message="vs2008.bat = '${vs2008.bat}'" level="info" />
+        <fail message="Installation of VS2008 not found. Try to add vs2008.bat to build.properties">
+            <condition>
+                <not>
+                    <resourceexists>
+                        <file file="${vs2008.bat}" />
+                    </resourceexists>
+                </not>
+            </condition>
+        </fail>
+    </target>
+
+    <!-- VCBuild /rebuild LbServer.vcproj "Debug|Win32" -->
+
+    <target name="debug" depends="fix-version-header, init-vs2008"
+            if="windows_os"
+            description="Create the LbServer.exe for debugging">
+        <echo message='"${vs2008.bat}" x86 &amp; VCBuild /rebuild LbServer.vcproj "Debug|Win32"'
+              level="info" />
+        <exec executable="cmd.exe" osfamily="windows"
+              dir="./LbServer" failonerror="true" >
+            <arg value="/c" />
+            <arg value='"${vs2008.bat}"' />
+            <arg value="x86" />
+            <arg value="&amp;" />
+            <arg value="VCBuild" />
+            <arg value="/rebuild" />
+            <arg value="LbServer.vcproj" />
+            <arg value="Debug^|Win32" />
+        </exec>
+    </target>
+
+    <target name="acutest" depends="fix-version-header, init-vs2008"
+            if="windows_os"
+            description="Run Unittest (AcuTest)">
+        <echo message='"${vs2008.bat}" x86 &amp; VCBuild /rebuild AcuTest.vcproj "Debug|Win32"'
+              level="info" />
+        <exec executable="cmd.exe" osfamily="windows"
+              dir="./AcuTest" failonerror="true" >
+            <arg value="/c" />
+            <arg value='"${vs2008.bat}"' />
+            <arg value="x86" />
+            <arg value="&amp;" />
+            <arg value="VCBuild" />
+            <arg value="/rebuild" />
+            <arg value="AcuTest.vcproj" />
+            <arg value="Debug^|Win32" />
+        </exec>
+        <exec executable="AcuTest/Debug/AcuTest.exe" osfamily="windows"
+              dir="." failonerror="true" />
+    </target>
+
+    <target name="setup-zips" depends="fix-version-header, fix-resources, fix-setup, fix-assemblyinfo, init-vs2008"
+            if="windows_os"
+            description="recompile, create the MSI file and Win32_Setup.zip and Win32_EXE.zip">
+        <!-- remove all files from release to force complete rebuild -->
+        <mkdir dir="Release" />
+        <delete>
+            <fileset dir="Release" includes="**/*.*"/>
+        </delete>
+        <!-- run VS2008 to rebuild LbServer.vcproj and Setup.vdproj -->
+        <echo message='"${vs2008.bat}" x86 &amp; devenv LbServerSetup.sln /build Release'
+              level="info" />
+        <exec executable="cmd.exe" osfamily="windows"
+              failonerror="true" >
+            <arg value="/c" />
+            <arg value='"${vs2008.bat}"' />
+            <arg value="x86" />
+            <arg value="&amp;" />
+            <arg value="devenv" />
+            <arg value="LbServer.sln" />
+            <arg value="/build" />
+            <arg value="Release" />
+        </exec>
+        <!-- create Win32_Setup.zip -->
+        <delete file="LbServer_${version}_Win32_Setup.zip" />
+        <zip destfile="LbServer_${version}_Win32_Setup.zip"
+             encoding="UTF-8" useLanguageEncodingFlag="true"
+             createUnicodeExtraFields="always"
+             comment="LbServer ${version} setup files for Windows (32 bit) (build on ${buildtime})" >
+            <zipfileset dir="LbServer_Setup/Release"
+                        prefix="LbServer_${version}_Win32_Setup">
+                <include name="setup.exe" />
+                <include name="*.msi" />
+            </zipfileset>
+        </zip>
+        <!-- create Win32_EXE.zip -->
+        <delete file="LbServer_${version}_Win32_EXE.zip" />
+        <zip destfile="LbServer_${version}_Win32_EXE.zip"
+             encoding="UTF-8" useLanguageEncodingFlag="true"
+             createUnicodeExtraFields="always"
+             comment="LbServer ${version} exe files files for Windows (32 bit) (build on ${buildtime})" >
+            <zipfileset dir="LbServer/Release"
+                        prefix="LbServer_${version}_Win32_EXE"
+                        includes="LbServer.exe" />
+            <zipfileset dir="LbServer"
+                        prefix="LbServer_${version}_Win32_EXE"
+                        includes="LoconetOverTcp.ico LbServer.exe.conf" />
+        </zip>
+    </target>
+
+    <target name="source-zips" depends="fix-version-header, fix-resources, fix-setup, fix-assemblyinfo"
+            description="Create SOURCE.zip">
+        <zip destfile="LbServer_${version}_Source.zip"
+             encoding="UTF-8" useLanguageEncodingFlag="true"
+             createUnicodeExtraFields="always"
+             comment="LbServer ${version} source files (build on ${buildtime})" >
+            <zipfileset dir="."
+                        prefix="LbServer_${version}_Source">
+                <include name="**/*.cpp"                              />
+                <include name="**/*.h"                                />
+                <include name="**/*.ico"                              />
+                <include name="**/*.rc"                               />
+                <include name="**/*.rc2"                              />
+                <include name="**/*.cs"                               />
+                <include name="**/*.resx"                             />
+                <include name="**/app.manifest"                       />
+                <include name="hlp/**/*"                              />
+                <include name="res/**/*"                              />
+                <include name="AcuTest/AcuTest.vcproj"                />
+                <include name="LbServer/LbServer.vcproj"              />
+                <include name="LbServer/LbServer.dsp"                 />
+                <include name="LbServer/LbServer.exe.conf"            />
+				<include name="LbServer/lbserver.service"             />
+                <include name="LbServer/*.txt"                        />
+                <include name="LbServer/*.TXT"                        />
+                <include name="LbServer/*.zargo"                      />
+                <include name="LbServer/*.uxf"                        />
+                <include name="LbServer/*.bat"                        />
+                <include name="LbServer/Makefile"                     />
+                <include name="LbServer_Setup/LbServer_Setup.vdproj"  />
+                <include name="LbServerConfig/LbServerConfig.csproj"  />
+                <include name="build.bat"                             />
+                <include name="build.xml"                             />
+                <include name="README.md"                             />
+                <include name="LbServer.sln"                          />
+
+                <exclude name="Debug/**/*"                   />
+                <exclude name="Release/**/*"                 />
+                <exclude name="dist/**/*"                    />
+                <exclude name="AcuTest/Debug/**/*"           />
+                <exclude name="AcuTest/Release/**/*"         />
+                <exclude name="LbServer_Setup/Debug/**/*"    />
+                <exclude name="LbServer_Setup/Release/**/*"  />
+                <exclude name="README.html"                  />
+                <exclude name="*.zip"                        />
+                <exclude name="*.aps"                        />
+                <exclude name="*.ncb"                        />
+                <exclude name="*.suo"                        />
+                <exclude name="*.user"                       />
+                <exclude name="**/*.bak"                     />
+                <exclude name="**/*.BAK"                     />
+                <exclude name="**/*.~*"                      />
+
+            </zipfileset>
+        </zip>
+    </target>
+
+    <target name="dist" depends="setup-zips, source-zips, acutest"
+            description="build all Zips for distribution" />
+
+    <target name="clean" depends="init"
+            description="Delete all temporary files (Release, Debug, *.bak, ..." >
+        <delete dir="LbServer/Debug" />
+        <delete dir="LbServer/Release" />
+        <delete dir="AcuTest/Debug" />
+        <delete dir="AcuTest/Release" />
+        <delete file="**/AcuTest.vcproj.*.*.user" />
+        <delete dir="LbServer_Setup/Debug" />
+        <delete dir="LbServer_Setup/Release" />
+        <delete dir="LbServerConfig/bin" />
+        <delete dir="LbServerConfig/obj" />
+        <delete verbose="true">
+            <fileset dir=".">
+                <include name="*.ncb" />
+                <include name="*.suo" />
+                <include name="*.user" />
+                <include name="**/*.bak" />
+                <include name="**/*.BAK" />
+                <include name="**/*.~*" />
+                <include name="**/AcuTest.vcproj.*.*.user" />
+                <include name="**/LbServer.vcproj.*.*.user" />
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="distclean" depends="clean" 
+            description="Delete all temporary files and dist zips" >
+        <delete verbose="true">
+            <fileset dir=".">
+                <include name="LbServer_*_Source.zip" />
+                <include name="LbServer_*_Win32_EXE.zip" />
+                <include name="LbServer_*_Win32_Setup.zip" />
+            </fileset>
+        </delete>
+    </target>
+
+</project>
